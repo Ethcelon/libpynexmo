@@ -32,11 +32,10 @@ import urllib2
 import urlparse
 import json
 
-BASEURL = "https://rest.nexmo.com"
 
 class NexmoMessenger(object):
 
-    def __init__(self, api_auth=None, sender=None, req_type=None):
+    def __init__(self, api_auth = None, sender = None, req_type = None):
         if api_auth:
             self.api_key = api_auth['api_key']
             self.api_secret = api_auth['api_secret']
@@ -60,25 +59,29 @@ class NexmoMessenger(object):
             raise Exception("No type to set, Options: json, xml")
         self.req_type = req_type
 
-    def new_message(self, receiver, type = 'text', sender = None, message):
+    def new_message(self, message, msg_type = 'text', response = 'json', sender = None):
         if (sender == None) and (self.sender == None):
             raise Exception("Sender is not set")
-        if not receiver:
-            raise Exception("Receiver is not set")
         if not sender:
             sender = self.sender
-        if type  == 'text' & message is None:
-            raise Exception("no message to send, use message = 'insert text here'")
-        msg = {
-            'api_secret' : self.api_secret,
-            'api_key' : self.api_key,
-            'reqtype' : self.req_type,
-            'to' : receiver,
-            'from' : sender
-        }
-
-        message = NexmoMessage(msg)
-        return message
+        if not message['Receiver']:
+            raise Exception("Receiver is not set")
+        if message is None:
+            raise Exception("Need a message!")
+        msg = message
+        if not msg['api_secret']:
+            msg['api_secret'] = self.api_secret
+        if not ['api_key']:
+            msg['api_key'] = self.api_key,
+        if not msg['reqtype']:
+            msg['reqtype'] =  self.req_type,
+        if not msg['type']:
+            msg['type'] = msg_type
+        try:
+            m = NexmoMessage(msg)
+            return m
+        except Exception, e:
+            print 'error: {errmsg]'.format(errmsg=str(e))
 
     def info(self, type, country=None):
 
@@ -98,7 +101,7 @@ class NexmoMessage:
     def __init__(self, details):
         self.sms = details
         self.sms.setdefault('type', 'text')
-        self.sms.setdefault('server', BASEURL)
+        self.sms.setdefault('server', 'https://rest.nexmo.com')
         self.sms.setdefault('reqtype', 'json')
 
         self.smstypes = [
