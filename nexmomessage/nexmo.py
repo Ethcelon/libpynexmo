@@ -36,13 +36,53 @@ BASEURL = "https://rest.nexmo.com"
 
 class NexmoMessenger:
 
-    def __init__(self, api_auth, sender=None):
+    def __init__(self, api_auth=None, sender=None, req_type=None):
+        if not api_auth:
+            self.api_key = api_auth['api_key']
+            self.api_secret = api_auth['api_secret']
+        self.sender = sender
+        self.req_type = req_type
+
+    def set_credentials(self, api_auth):
         self.api_key = api_auth['api_key']
         self.api_secret = api_auth['api_secret']
-        self.sender = sender
-    def new_message(receiver, type='text', sender=self.sender):
-        pass
 
+    def set_req_type(self, req_type):
+        if req_type is None:
+            raise Exception("No type to set, Options: json, xml")
+        self.req_type = req_type
+
+    def new_message(self, receiver, type = 'text', sender = None):
+        if not sender or self.sender:
+            raise Exception("Sender is not set")
+        if not receiver:
+            raise Exception("Receiver is not set")
+        if not sender:
+            sender = self.sender
+
+        msg = {
+            'api_secret' : self.api_secret,
+            'api_auth' : self.api_auth,
+            'reqtype' : self.req_type,
+            'to' : receiver,
+            'sender' : sender
+        }
+
+        message = NexmoMessage(msg)
+        return message
+
+    def info(self, type, country=None):
+
+        req = {
+            'api_secret': self.api_secret,
+            'api_key': self.api_key,
+            'type' : type
+            }
+
+        if type == "pricing" and country is not None:
+            raise Exception("pricing needs a country")
+        response = NexmoMessage(req).send_request()
+        return response
 
 class NexmoMessage:
 
