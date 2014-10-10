@@ -34,6 +34,15 @@ import json
 
 BASEURL = "https://rest.nexmo.com"
 
+class NexmoMessenger:
+
+    def __init__(self, api_auth, sender=None):
+        self.api_key = api_auth['api_key']
+        self.api_secret = api_auth['api_secret']
+        self.sender = sender
+    def new_message(receiver, type='text', sender=self.sender):
+        pass
+
 
 class NexmoMessage:
 
