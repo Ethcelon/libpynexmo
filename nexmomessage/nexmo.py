@@ -34,38 +34,47 @@ import json
 
 BASEURL = "https://rest.nexmo.com"
 
-class NexmoMessenger:
+class NexmoMessenger(object):
 
     def __init__(self, api_auth=None, sender=None, req_type=None):
-        if not api_auth:
+        if api_auth:
             self.api_key = api_auth['api_key']
             self.api_secret = api_auth['api_secret']
         self.sender = sender
         self.req_type = req_type
+    
+    def set_sender(self, sender):
+        if not sender:
+            raise Exception("no sender spcified")
+        self.sender = sender
 
     def set_credentials(self, api_auth):
-        self.api_key = api_auth['api_key']
-        self.api_secret = api_auth['api_secret']
+        if not api_auth['api_key'] or not api_auth['api_secret']:
+            raise Exception("no api_auth specified")
+        else:
+            self.api_key = api_auth['api_key']
+            self.api_secret = api_auth['api_secret']
 
     def set_req_type(self, req_type):
         if req_type is None:
             raise Exception("No type to set, Options: json, xml")
         self.req_type = req_type
 
-    def new_message(self, receiver, type = 'text', sender = None):
-        if not sender or self.sender:
+    def new_message(self, receiver, type = 'text', sender = None, message):
+        if (sender == None) and (self.sender == None):
             raise Exception("Sender is not set")
         if not receiver:
             raise Exception("Receiver is not set")
         if not sender:
             sender = self.sender
-
+        if type  == 'text' & message is None:
+            raise Exception("no message to send, use message = 'insert text here'")
         msg = {
             'api_secret' : self.api_secret,
-            'api_auth' : self.api_auth,
+            'api_key' : self.api_key,
             'reqtype' : self.req_type,
             'to' : receiver,
-            'sender' : sender
+            'from' : sender
         }
 
         message = NexmoMessage(msg)
