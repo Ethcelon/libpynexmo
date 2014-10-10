@@ -35,13 +35,13 @@ import json
 
 class NexmoMessenger(object):
 
-    def __init__(self, api_auth = None, sender = None, req_type = None):
+    def __init__(self, api_auth=None, sender=None, req_type=None):
         if api_auth:
             self.api_key = api_auth['api_key']
             self.api_secret = api_auth['api_secret']
         self.sender = sender
         self.req_type = req_type
-    
+
     def set_sender(self, sender):
         if not sender:
             raise Exception("no sender spcified")
@@ -59,7 +59,7 @@ class NexmoMessenger(object):
             raise Exception("No type to set, Options: json, xml")
         self.req_type = req_type
 
-    def new_message(self, message, msg_type = 'text', response = 'json', sender = None):
+    def new_message(self, message, msg_type='text', response='json', sender=None):
         if (sender == None) and (self.sender == None):
             raise Exception("Sender is not set")
         if not sender:
