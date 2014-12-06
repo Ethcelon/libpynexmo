@@ -34,8 +34,9 @@ import json
 
 
 class NexmoMessenger(object):
-
+    """NexmoMessenger"""
     def __init__(self, api_auth=None, sender=None, req_type=None):
+        """Initialize new messenger"""
         if api_auth:
             self.api_key = api_auth['api_key']
             self.api_secret = api_auth['api_secret']
@@ -43,38 +44,50 @@ class NexmoMessenger(object):
         self.req_type = req_type
 
     def set_sender(self, sender):
+        # Set sender for NexmoMessenger
         if not sender:
-            raise Exception("no sender spcified")
+            raise Exception('No sender spcified')
         self.sender = sender
 
     def set_credentials(self, api_auth):
+        """Set credentials for NexmoMessenger
+        Format:
+        {
+            'api_key':'key',
+            'api_secret':'secret'
+        }
+        """
         if not api_auth['api_key'] or not api_auth['api_secret']:
-            raise Exception("no api_auth specified")
+            raise Exception("No credentials specified.\
+                Usage: Set credentials {'api_key':'key', 'api_secret':'secret' }")
         else:
             self.api_key = api_auth['api_key']
             self.api_secret = api_auth['api_secret']
 
-    def set_req_type(self, req_type):
-        if req_type is None:
-            raise Exception("No type to set, Options: json, xml")
-        self.req_type = req_type
+    def set_reqtype(self, reqtype):
+        # Set request type. Options: json, xml
+        if reqtype is None:
+            raise Exception('No type to set, Options: json, xml')
+        self.req_type = reqtype
 
-    def new_message(self, message, msg_type='text', response='json', sender=None):
-        if (sender == None) and (self.sender == None):
-            raise Exception("Sender is not set")
+    def new_message(self, details, msg_type='text',
+                    response='json', sender=None):
+        # create a new message
+        if details is None:
+            raise Exception('Need a message!')
+        if (sender is None) and (self.sender is None):
+            raise Exception('Sender is not set.')
         if not sender:
             sender = self.sender
-        if not message['Receiver']:
-            raise Exception("Receiver is not set")
-        if message is None:
-            raise Exception("Need a message!")
-        msg = message
+        if not details['Receiver']:
+            raise Exception('Receiver is not set')
+        msg = details
         if not msg['api_secret']:
             msg['api_secret'] = self.api_secret
         if not ['api_key']:
             msg['api_key'] = self.api_key,
         if not msg['reqtype']:
-            msg['reqtype'] =  self.req_type,
+            msg['reqtype'] = self.req_type,
         if not msg['type']:
             msg['type'] = msg_type
         try:
@@ -84,17 +97,18 @@ class NexmoMessenger(object):
             print 'error: {errmsg]'.format(errmsg=str(e))
 
     def info(self, type, country=None):
-
+        #retrieve info
         req = {
             'api_secret': self.api_secret,
             'api_key': self.api_key,
-            'type' : type
+            'type': type
             }
 
-        if type == "pricing" and country is not None:
-            raise Exception("pricing needs a country")
+        if type == 'pricing' and country is not None:
+            raise Exception('pricing needs a country')
         response = NexmoMessage(req).send_request()
         return response
+
 
 class NexmoMessage:
 
