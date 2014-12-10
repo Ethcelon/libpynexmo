@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-
+from xlml import etree
 import urllib
 import urllib2
 import urlparse
@@ -264,4 +264,11 @@ class NexmoMessage:
             return False
 
     def send_request_xml(self, request):
-        return "XML request not implemented yet."
+        url = request
+        req = urllib2.Request(url=url)
+        req.add_header('Accept', 'application/json')
+        try:
+            return etree.parse(urllib2.urlopen(req))
+        except Exception, e:
+            print str(e)
+            return False
