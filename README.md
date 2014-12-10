@@ -13,7 +13,7 @@ Installation
 
 Quick start (sending a message)
 -------------------------------
-
+( The following does not use the nexmoMessenger class )
 First you need to load up the package and construct a dictionary
 with your API credentials and message, like this:
 
